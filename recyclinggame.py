@@ -60,7 +60,7 @@ def animateditems(itemstoanimate):
     for i in itemstoanimate:
         duration=startspeed-currentlevel
         i.anchor=("center","bottom")
-        animation=animate(i,duration=duration,on_finished=handlegameover)
+        animation=animate(i,duration=duration,y=800,on_finished=handlegameover)
         animations.append(animation)
 
 def handlegameover():
