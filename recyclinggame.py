@@ -56,10 +56,11 @@ def itemlayout(itemstolayout):
         item.x=xpos
 
 def animateditems(itemstoanimate):
+    global animations
     for i in itemstoanimate:
         duration=startspeed-currentlevel
         i.anchor=("center","bottom")
-        animation=animate(i,duration=duration,on_finished=handlegameover())
+        animation=animate(i,duration=duration,on_finished=handlegameover)
         animations.append(animation)
 
 def handlegameover():
@@ -75,12 +76,12 @@ def on_mouse_down(pos):
                 handlegameover()
 
 def handlegamewin():
-    global gamewin,additems,animations
+    global gamewin,additems,animations,currentlevel
     stopanimations(animations)
     if currentlevel==levels:
         gamewin=True
     else:
-        curentlevel+=1
+        currentlevel+=1
         additems=[]
         animations=[]
         
