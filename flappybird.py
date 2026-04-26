@@ -7,8 +7,12 @@ pygame.display.set_caption("WELCOME TO THE FLAPPY BIRD GAME, HOW FAR CAN YOU GO.
 bg=pygame.image.load("bg1.png")
 ground=pygame.image.load("groundbg2.png")
 button=pygame.image.load("restartbutton.png")
+pipefreq=1500
+lastpipe=pygame.time.get_ticks()-pipefreq
 flying=False
 gameover=False
+font=pygame.font.SysFont("calligrapher",50)
+score=0
 
 class birds(pygame.sprite.Sprite):
     def __init__(self,x,y):
@@ -42,9 +46,28 @@ class birds(pygame.sprite.Sprite):
                 if self.index>=3:
                     self.index=0
                 self.image=self.images[self.index]
+
+class pipes(pygame.sprite.Sprite):
+    def __init__(self,x,y,position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=pygame.image.load("pipes.png")
+        self.rect=self.image.get_rect()
+        if position==1:
+            self.image=pygame.transform.flip(self.image,False,True)
+            self.rect.bottomleft=[x,y-75]
+        elif position==-1:
+            self.rect.topleft=[x,y+75]
+
+    def update(self):
+        self.rect.x-=4
+        if self.rect.right<0:
+            self.kill()
+
+
 groundscroll=0
 birdgroup=pygame.sprite.Group()
 angrybird=birds(50,450)
+pipegroup=pygame.sprite.Group()
 birdgroup.add(angrybird)
 
 while True:
@@ -57,11 +80,28 @@ while True:
     
     screen.blit(bg,(0,0))
     birdgroup.draw(screen)
+    pipegroup.draw(screen)
     birdgroup.update()
     screen.blit(ground,(groundscroll,682))
-    groundscroll-=4
+    fonttext1=font.render(str(score),True,"black")
+    screen.blit(fonttext1,(20,20))
+    if angrybird.rect.bottom>=682:
+        gameover=True
+        flying=False 
+    if flying==True and gameover==False:
+        timenow=pygame.time.get_ticks()
+        if timenow-lastpipe>pipefreq:
+            pipeheight=random.randint(-100,100)
+            bottompipe=pipes(864,425+pipeheight,-1)
+            toppipe=pipes(864,425+pipeheight,1)
+            pipegroup.add(bottompipe)
+            pipegroup.add(toppipe)
+            lastpipe=timenow
+        pipegroup.update()
 
-    if groundscroll<-36:
-        groundscroll=0
+        groundscroll-=4
+
+        if groundscroll<-36:
+            groundscroll=0
 
     pygame.display.update()
